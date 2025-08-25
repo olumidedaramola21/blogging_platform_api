@@ -78,7 +78,46 @@ async function articleRoutes(fastify, options) {
                 })
             }
         }
-    }) 
+    });
+    
+    // Delete /articles/:id - Delete an article
+    fastify.delete("/articles/:id", async(request, reply) => {
+        try {
+
+            const {id} = request.params;
+
+            // find and delete article
+            const deletedArticle = await Article.findByIdAndDelete(id);
+
+            if (!deletedArticle) {
+                return reply.code(404).send({
+                    success: false,
+                    error: "Article not found"
+                });
+            }
+
+            return {
+                success: true,
+                message: "Article deleted successfully",
+                data: {deletedId: id}
+            };
+
+        } catch (error) {
+            // Handle invalid MongoDb ObjectId
+            if (error == "CastError") {
+                return reply.code(400).send({
+                    success: false,
+                    error: "Invalid article Id format"
+                })
+            }
+
+            reply.code(500).send({
+                success: false,
+                error: "Failed to delete article",
+                details: error.message
+            })
+        }
+    });
 
  
 }
