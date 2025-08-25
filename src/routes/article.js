@@ -51,6 +51,35 @@ async function articleRoutes(fastify, options) {
     }
     });
 
+    // GET /articles/:id - Retrieve a single article by ID
+    fastify.get("/articles/:id", async(request, reply) => {
+        try {
+            const {id} = request.params;
+
+            // find article by Id
+            const article = await Article.findById(id).select("-__v");
+            if (!article) {
+                return reply.code(404).send({
+                    success: false,
+                    error: "Article not found"
+                })
+            }
+            return {
+                success: true,
+                data: article
+            }
+
+        } catch (error) {
+            // Handle invalid MongoDB ObjectId
+            if (error.name == "CastError") {
+                return reply.code(400).send({
+                    success: false,
+                    error: "Invalid article ID format"
+                })
+            }
+        }
+    }) 
+
  
 }
 
