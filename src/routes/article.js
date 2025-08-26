@@ -83,6 +83,49 @@ async function articleRoutes(fastify, options) {
     }
   });
 
+  // Post /article - Create new article
+  fastify.post("/article", async (request, reply) => {
+    try {
+      const {title, content, author, tags} = request.body
+      // create new Article instance
+    const article = new Article ({
+      title,
+      content,
+      author,
+      tags: tags  || [] // default to empty array if no tag is provided
+    })
+    // save to database
+    const savedArticle = await article.save()
+
+    reply.code(201).send({
+      success: true,
+      message: "Article created successfully",
+      data: savedArticle
+    });
+
+    } catch (error) {
+      // Handle validation error "Mongoose validation error: occurs when data doesn't schema requirements"
+      if (error.name === "ValidationError") {
+        const errors = Object.values(error.errors).map(err => err.message); // collects all 
+        reply.code(400).send({
+          success: false,
+          error:  "Validation failed",
+          details: errors
+        })
+      }
+
+      reply.code(500).send({
+        success: false,
+        error: "Failed to create article",
+        message: error.message,
+      })
+    }
+  })
+
+
+  // Put /articles/:id  - Update an existing article
+
+
   // Delete /articles/:id - Delete an article
   fastify.delete("/articles/:id", async (request, reply) => {
     try {
