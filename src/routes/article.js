@@ -2,6 +2,10 @@ const Article = require("../models/Article");
 
 // Define all article related routes
 async function articleRoutes(fastify, options) {
+  fastify.get("/", async(request, reply) => {
+    reply.code(200).send("Welcome to blog API 🛩️✈️")
+  } )
+
   fastify.get("/articles", async (request, reply) => {
     try {
       const { tags, author, limit = 10, page = 1 } = request.query;
