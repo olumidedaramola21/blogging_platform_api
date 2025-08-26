@@ -74,6 +74,12 @@ async function articleRoutes(fastify, options) {
           error: "Invalid article ID format",
         });
       }
+
+      reply.code(500).send({
+        success: false,
+        error: "Failed to get article",
+        message: error.message,
+      })
     }
   });
 
