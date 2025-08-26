@@ -10,7 +10,7 @@ async function startServer() {
     await connectDB(); // connect to database
     await fastify.register(require("./routes/article")); // register article route
     // heath check endpoint to monitor server status
-    fastify.get("/heath", async (request, reply) => {
+    fastify.get("/health", async (request, reply) => {
       return {
         status: "Ok",
         timestamp: new Date().toISOString(),
